@@ -235,7 +235,8 @@ public class PhotoRouter_RAware {
 	private void calculatePhotoSequence(DTNHost from, ArrayList<Metadata.Photo> rcvdNonDeliveredPhotos) {
 		
 		final ArrayList<Metadata.Photo> thisDeliveredPhotos = (ArrayList<Metadata.Photo>) router.metadata.FilteredDeliveredPhoto(router.photoList);
-		final ArrayList<Metadata.Photo> thisNonDeliveredPhotos = (ArrayList<Metadata.Photo>) router.metadata.FilteredNonDeliveredPhoto(router.photoList);
+		ArrayList<Metadata.Photo> existingPhotoList = (ArrayList<DataHandler.Metadata.Photo>) router.metadata.FilteredExistingPhoto(router.photoList);
+		final ArrayList<Metadata.Photo> thisNonDeliveredPhotos = (ArrayList<Metadata.Photo>) router.metadata.FilteredNonDeliveredPhoto(existingPhotoList);
 		
 		//consider this node a, valid nodes m1,m2..., but not node b
 		int n = this.cache.size() + 1; //+1 for this node
@@ -368,6 +369,7 @@ public class PhotoRouter_RAware {
 				//add recently found delivered photo to current photolist
 				for(Metadata.Photo photo: rcvdDeliveredPhotos) {
 					if(router.metadata.FindPhotoByID(photo.pid, router.photoList) == null) {
+						photo.exist = false; 
 						router.photoList.add(photo);
 						newDeliveredPhotos.add(photo);
 					}
@@ -435,9 +437,17 @@ public class PhotoRouter_RAware {
 			int photoId = Integer.parseInt(msgId.split("_")[1]); //System.out.println("Received photo: " + getHost().toString() + "_" + from.toString() + " ||| " + photoId);
 			
 			boolean replacable = true;
-			if(router.photoList.size() >= router.photoLimit) {
+			ArrayList<Metadata.Photo> existingPhotoList = (ArrayList<DataHandler.Metadata.Photo>) router.metadata.FilteredExistingPhoto(router.photoList);
+			if(existingPhotoList.size() >= router.photoLimit) {
+				
+				//test
+				//int r = router.getHost().getAddress();
+				//if (r == 1 || r == 30 || r ==101){
+				//	System.out.println(r);
+				//}
+				
 				replacable = false;
-				for(Metadata.Photo photo: router.photoList) {
+				for(Metadata.Photo photo: existingPhotoList) {
 					if(this.sendRqstPhotoIDList.get(from.getAddress()).contains(photo.pid) == false) {
 						ArrayList<Metadata.POI> pois = new ArrayList<Metadata.POI>();
 						if (photo.tid != -1) {
@@ -461,8 +471,8 @@ public class PhotoRouter_RAware {
 							}
 						}
 						
-						router.metadata.DeletePhotoByID(photo.pid, router.photoList);
-						replacable = true;
+						replacable = router.metadata.DeletePhotoByID(photo.pid, router.photoList); // on investigation
+						//replacable = true;
 						break;
 					}
 				}

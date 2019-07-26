@@ -357,13 +357,14 @@ public class MetadataManagement {
 		return filterOne(poiList, filteredPredicate);
 	}
 	
-	public static void DeletePhotoByID(final int pid, Collection<Photo> photoList) {
+	public static boolean DeletePhotoByID(final int pid, Collection<Photo> photoList) {
 		for(Photo photo: photoList) {
 			if(photo.pid == pid) {
 				photoList.remove(photo);
-				break;
+				return true;
 			}
 		}
+		return false;
 	}
 	
 	

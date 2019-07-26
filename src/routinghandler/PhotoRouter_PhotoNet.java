@@ -142,7 +142,7 @@ public class PhotoRouter_PhotoNet {
 			            new Comparator<Entry<Metadata.Photo, Long>>() {
 			                @Override
 			                public int compare(Entry<Metadata.Photo, Long> e1, Entry<Metadata.Photo, Long> e2) {
-			                    return e2.getValue().compareTo(e1.getValue());
+			                    return e1.getValue().compareTo(e2.getValue());
 			                }
 			            }
 				    );

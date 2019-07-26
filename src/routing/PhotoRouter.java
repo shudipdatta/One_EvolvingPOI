@@ -5,6 +5,7 @@ import java.lang.management.ThreadMXBean;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map.Entry;
 
 import DataHandler.ChoosePhoto.PhotoGroupSequence;
 import DataHandler.Constant;
@@ -230,6 +231,9 @@ public class PhotoRouter extends ActiveRouter {
 			//initial metadata calculations for poi based on current photos
 			metadata.SetInitialValues(poiList, photoList); //System.out.println(getHost().toString() + "_" + this.photoList.size());
 		}
+//		else {
+//			System.out.println(this.getHost().getAddress());
+//		}
 	
 		//initialize router types
 		if(this.scenario == Constant.NoLimit) {
@@ -611,6 +615,7 @@ public class PhotoRouter extends ActiveRouter {
 //				this.dataSource == Constant.Synthetic ||
 //				this.dataSource == Constant.Geolife ||
 //				this.dataSource == Constant.ASTURIES) {
+		//System.out.println(SimClock.getTime());
 
 			//the following code block is for creating necessary message
 			List<Connection> connections = getConnections();
@@ -633,6 +638,7 @@ public class PhotoRouter extends ActiveRouter {
 				}
 			}
 //		}
+		cvgAndRedDistributionCalculation();
 			
 		//usual update operations
 		super.update();
@@ -767,5 +773,153 @@ public class PhotoRouter extends ActiveRouter {
 		ThreadMXBean bean = ManagementFactory.getThreadMXBean( );
 		return bean.isCurrentThreadCpuTimeSupported( ) ?
 				bean.getCurrentThreadUserTime( ) : 0L;
+	}
+	/*
+	 * 
+	 */
+	public void cvgAndRedDistributionCalculation() {
+		double simTime = SimClock.getTime();
+		
+		if( (simTime == 2) ||
+			(this.dataSource == Constant.Infocom && simTime % 33750 == 0) ||
+			(this.dataSource == Constant.ASTURIES && simTime % 3162240 == 0) ||
+			(this.dataSource == Constant.Geolife && simTime % 16038847 == 0) ) {
+			
+			if(PhotoReport.cvgAndRedMap.containsKey(simTime)) {
+				return;
+			}
+			
+			int totalNodeNum = 0;
+			for (PhotoRouter router : allRouters)
+				if (router.getHost().toString().startsWith("v") == false)
+					totalNodeNum++;
+				
+			HashMap<Metadata.POI, ArrayList<Integer>> allPoiPhotoDirMap = new HashMap<Metadata.POI, ArrayList<Integer>>();
+			int totalRedundancy = 0, totalCoverage = 0, allRouterPhotoNum = 0;
+			ArrayList<Integer> routerCoverage = new ArrayList<Integer>();
+			ArrayList<Integer> routerRedundancy = new ArrayList<Integer>();
+			ArrayList<Integer> routerPhotoNum = new ArrayList<Integer>();
+//			int[] routerCoverage = new int[totalNodeNum];
+//			int[] routerRedundancy = new int[totalNodeNum];
+//			int[] routerPhotoNum = new int[totalNodeNum];
+			
+			for (PhotoRouter router : allRouters) {
+				if (router.getHost().toString().startsWith("v") == false) {
+					HashMap<Metadata.POI, ArrayList<Integer>> poiPhotoDirMap = new HashMap<Metadata.POI, ArrayList<Integer>>();
+					
+//					if (this.scenario == Constant.RAware || this.scenario == Constant.PhotoNet) {
+//						for (Metadata.Photo photo: router.photoList) {
+//							Metadata.POI poi;
+//							if (photo.tid < 0) {
+//								poi = this.metadata.FindPoiByID(photo.hid, PhotoReport.hiddenPoiList);
+//							}
+//							else {
+//								poi = this.metadata.FindPoiByID(photo.tid, PhotoReport.actualPoiList);
+//							}
+//							int lowerAngle = this.metadata.GetLowerDirAngle(poi, photo);
+//							if (poiPhotoDirMap.containsKey(poi) == false) {
+//								poiPhotoDirMap.put(poi, new ArrayList<Integer>());							
+//							}
+//							poiPhotoDirMap.get(poi).add(lowerAngle);
+//						}
+//					}
+//					else {
+						ArrayList<Metadata.Photo> existingPhotoList = (ArrayList<DataHandler.Metadata.Photo>) this.metadata.FilteredExistingPhoto(router.photoList);
+						
+						for (Metadata.Photo photo: existingPhotoList) {
+							Metadata.POI poi;
+							if (photo.tid < 0) {
+								poi = this.metadata.FindPoiByID(photo.hid, PhotoReport.hiddenPoiList);
+							}
+							else {
+								poi = this.metadata.FindPoiByID(photo.tid, PhotoReport.actualPoiList);
+							}
+							int lowerAngle = this.metadata.GetLowerDirAngle(poi, photo);
+							if (poiPhotoDirMap.containsKey(poi) == false) {
+								poiPhotoDirMap.put(poi, new ArrayList<Integer>());
+							}
+							poiPhotoDirMap.get(poi).add(lowerAngle);
+						}
+//					}
+					
+					int coverage = 0, redundancy = 0;
+					int routerPhotoNumCount = 0;
+					for (Entry<Metadata.POI, ArrayList<Integer>> entry : poiPhotoDirMap.entrySet()) { 
+						Metadata.POI poi = entry.getKey();
+						ArrayList<Integer> lowerAngleList = entry.getValue();
+						if (allPoiPhotoDirMap.containsKey(poi) == false) {
+							allPoiPhotoDirMap.put(poi, new ArrayList<Integer>());
+						}
+						allPoiPhotoDirMap.get(poi).addAll(lowerAngleList);
+//						routerPhotoNum[router.getHost().getAddress()] += lowerAngleList.size();
+						routerPhotoNumCount += lowerAngleList.size();
+						coverage += this.metadata.TotalCoverage(lowerAngleList);
+						redundancy += this.metadata.RedundantCoverage(lowerAngleList);
+					}
+					allRouterPhotoNum += routerPhotoNumCount;
+					//if (routerPhotoNumCount > this.photoLimit) {
+					//	System.out.println();
+					//}
+					routerPhotoNum.add(routerPhotoNumCount);
+					routerCoverage.add(coverage);
+					routerRedundancy.add(redundancy);
+//					routerCoverage[router.getHost().getAddress()] = coverage;
+//					routerRedundancy[router.getHost().getAddress()] = redundancy;
+					totalCoverage += coverage;
+					totalRedundancy += redundancy;
+				}	
+			}
+			double avgCoverage = (double)totalCoverage / totalNodeNum;
+			double avgRedundancy = (double)totalRedundancy / totalNodeNum;
+			
+			int aboveAvgCvgCount = 0, belowAvgCvgCount = 0;
+			int aboveAvgRedCount = 0, belowAvgRedCount = 0;
+			int aboveAvgCvgPhotoCount = 0, belowAvgCvgPhotoCount = 0;
+			int aboveAvgRedPhotoCount = 0, belowAvgRedPhotoCount = 0;
+			
+			for (int i=0; i<routerRedundancy.size(); i++) {
+				int cvg = routerCoverage.get(i);
+				int red = routerRedundancy.get(i);
+				
+				if (cvg > avgCoverage) {
+					aboveAvgCvgCount++;
+					aboveAvgCvgPhotoCount += routerPhotoNum.get(i);
+				}
+				else {
+					belowAvgCvgCount++;
+					belowAvgCvgPhotoCount += routerPhotoNum.get(i);
+				}
+				
+				if (red > avgRedundancy) {
+					aboveAvgRedCount++;
+					aboveAvgRedPhotoCount += routerPhotoNum.get(i);
+				}
+				else {
+					belowAvgRedCount++;
+					belowAvgRedPhotoCount += routerPhotoNum.get(i);
+				}
+			}
+			int aboveAvgCvgPhoto = aboveAvgCvgPhotoCount / aboveAvgCvgCount;
+			int belowAvgCvgPhoto = belowAvgCvgPhotoCount / belowAvgCvgCount;				
+			int aboveAvgRedPhoto = aboveAvgRedPhotoCount / aboveAvgRedCount;
+			int belowAvgRedPhoto = belowAvgRedPhotoCount / belowAvgRedCount;
+	
+			int networkCoverage = 0, networkRedundancy = 0;
+			for (Entry<Metadata.POI, ArrayList<Integer>> entry : allPoiPhotoDirMap.entrySet()) { 
+				networkCoverage += this.metadata.TotalCoverage(entry.getValue());
+				networkRedundancy += this.metadata.RedundantCoverage(entry.getValue());
+			}
+			
+			double avgPhotoNum = (double)allRouterPhotoNum / totalNodeNum; 
+			int aboveAvgPhoto = 0, belowAvgPhoto = 0;
+			for (int photoNum: routerPhotoNum) {
+				if (photoNum > avgPhotoNum) aboveAvgPhoto++;
+				else belowAvgPhoto++;
+			}
+			
+			PhotoReport.CalculateRedundancy(simTime, avgPhotoNum, aboveAvgPhoto, belowAvgPhoto,
+					avgCoverage, aboveAvgCvgCount, belowAvgCvgCount, aboveAvgCvgPhoto, belowAvgCvgPhoto, networkCoverage,
+					avgRedundancy, aboveAvgRedCount, belowAvgRedCount, aboveAvgRedPhoto, belowAvgRedPhoto, networkRedundancy);
+		}
 	}
 }

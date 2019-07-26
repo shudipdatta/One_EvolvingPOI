@@ -12,6 +12,51 @@ import DataHandler.Metadata;
 import DataHandler.PhotoPOI;
 import DataHandler.Metadata.Photo;
 
+class CvgAndRed {
+	public double avgPhotoNum;
+	public int aboveAvgPhoto;
+	public int belowAvgPhoto;
+	
+	public double avgRedundancy;
+	public int aboveAvgRedCount;
+	public int belowAvgRedCount;
+	public int aboveAvgRedPhoto;
+	public int belowAvgRedPhoto;
+	public int networkRedundancy;
+	
+	public double avgCoverage;
+	public int aboveAvgCvgCount;
+	public int belowAvgCvgCount;
+	public int aboveAvgCvgPhoto;
+	public int belowAvgCvgPhoto;
+	public int networkCoverage;
+	
+	public CvgAndRed( double avgPhotoNum, int aboveAvgPhoto, int belowAvgPhoto,
+			double avgCoverage, int aboveAvgCvgCount, int belowAvgCvgCount, 
+			int aboveAvgCvgPhoto, int belowAvgCvgPhoto, int networkCoverage,
+			double avgRedundancy, int aboveAvgRedCount, int belowAvgRedCount, 
+			int aboveAvgRedPhoto, int belowAvgRedPhoto, int networkRedundancy) {
+		
+		this.avgPhotoNum = avgPhotoNum;
+		this.aboveAvgPhoto = aboveAvgPhoto;
+		this.belowAvgPhoto = belowAvgPhoto;
+		
+		this.avgCoverage = avgCoverage;
+		this.aboveAvgCvgCount = aboveAvgCvgCount;
+		this.belowAvgCvgCount = belowAvgCvgCount;
+		this.aboveAvgCvgPhoto = aboveAvgCvgPhoto;
+		this.belowAvgCvgPhoto = belowAvgCvgPhoto;
+		this.networkCoverage = networkCoverage;
+		
+		this.avgRedundancy = avgRedundancy;
+		this.aboveAvgRedCount = aboveAvgRedCount;
+		this.belowAvgRedCount = belowAvgRedCount;
+		this.aboveAvgRedPhoto = aboveAvgRedPhoto;
+		this.belowAvgRedPhoto = belowAvgRedPhoto;
+		this.networkRedundancy = networkRedundancy;
+	}
+}
+
 public class PhotoReport extends Report {
 	
 	DecimalFormat df;
@@ -27,6 +72,7 @@ public class PhotoReport extends Report {
 	//reporting variables
 	public static HashMap<Integer, Integer> initialCoverageValue;
 	public static HashMap<Integer, Integer> initialRedundantCoverageValue;
+	public static HashMap<Double, CvgAndRed> cvgAndRedMap;
 	
 	public static HashMap<Integer, Integer> coverageValue;
 	public static HashMap<Integer, Double> halfCoverageTime;
@@ -68,6 +114,7 @@ public class PhotoReport extends Report {
 		
 		initialCoverageValue = new HashMap<Integer, Integer>();
 		initialRedundantCoverageValue = new HashMap<Integer, Integer>();	
+		cvgAndRedMap = new HashMap<Double, CvgAndRed>();
 		df = new DecimalFormat(".##"); 
 		
 		undefCluster = new ArrayList<Metadata.UndefCluster>();
@@ -126,6 +173,18 @@ public class PhotoReport extends Report {
 			redundantCoverageValue.put(i+1, metadata.RedundantCoverage(poi.cvgDetail));
 			System.out.println("");
 		}
+	}
+	
+	public static void CalculateRedundancy(double simTime, double avgPhotoNum, int aboveAvgPhoto, int belowAvgPhoto, 
+			double avgCoverage, int aboveAvgCvgCount, int belowAvgCvgCount, 
+			int aboveAvgCvgPhoto, int belowAvgCvgPhoto, int networkCoverage,
+			double avgRedundancy, int aboveAvgRedCount, int belowAvgRedCount, 
+			int aboveAvgRedPhoto, int belowAvgRedPhoto, int networkRedundancy) {
+		
+		CvgAndRed cvgAndRed = new CvgAndRed(avgPhotoNum, aboveAvgPhoto, belowAvgPhoto,
+				avgCoverage, aboveAvgCvgCount, belowAvgCvgCount, aboveAvgCvgPhoto, belowAvgCvgPhoto, networkCoverage,
+				avgRedundancy, aboveAvgRedCount, belowAvgRedCount, aboveAvgRedPhoto, belowAvgRedPhoto, networkRedundancy);		
+		PhotoReport.cvgAndRedMap.put(simTime, cvgAndRed);
 	}
 	
 	public void CalculatePointNum() {
@@ -372,8 +431,8 @@ public class PhotoReport extends Report {
 		statsText += "\n";
 		
 		//create half coverage value time
-		int simInterval = 1000;
 		int simTotal = (int) getSimTime();
+		int simInterval = simTotal/10; //1000;
 		int[] halfCvgArray = new int[simTotal/simInterval+1];
 		statsText += "Half Coverage Group-----------\t";
 		for(int i=0; i<halfCvgArray.length; i++) {
@@ -406,8 +465,71 @@ public class PhotoReport extends Report {
 		for(int i=0; i<transPhotoArray.length; i++) {
 			statsText += transPhotoArray[i] + "\t";
 		}
+		statsText += "\n\n";
+		
+		//create coverage and redundancy distribution
+		String simTimeString =		"Cvg&Red Distribution----------\t";
+		
+		String photoString1 = "Average PhotoNum--------------\t";
+		String photoString2 = "Nodes Above Average-----------\t";
+		String photoString3 = "Nodes Below Average-----------\t"; 
+		
+		String cvgString1 =	"Average Coverage--------------\t";
+		String cvgString2 =	"Nodes Above Average-----------\t";
+		String cvgString3 =	"Nodes Below Average-----------\t";
+		String cvgString4 = "Photos Above Average----------\t";
+		String cvgString5 = "Photos Below Average----------\t";
+		String cvgString6 =	"Network Coverage--------------\t";
+		
+		String redString1 =	"Average Redundancy------------\t";
+		String redString2 =	"Nodes Above Average-----------\t";
+		String redString3 =	"Nodes Below Average-----------\t";
+		String redString4 = "Photos Above Average----------\t";
+		String redString5 = "Photos Below Average----------\t";
+		String redString6 =	"Network Redundancy------------\t";
+		
+		for (Entry<Double, CvgAndRed> entry : cvgAndRedMap.entrySet()) { 
+			double simTime = entry.getKey();
+			CvgAndRed cvgAndRed = entry.getValue();
+			simTimeString += simTime + "\t";
+			
+			photoString1 += cvgAndRed.avgPhotoNum + "\t";
+			photoString2 += cvgAndRed.aboveAvgPhoto + "\t";
+			photoString3 += cvgAndRed.belowAvgPhoto + "\t";
+			
+			cvgString1 += cvgAndRed.avgCoverage + "\t";
+			cvgString2 += cvgAndRed.aboveAvgCvgCount + "\t";
+			cvgString3 += cvgAndRed.belowAvgCvgCount + "\t";
+			cvgString4 += cvgAndRed.aboveAvgCvgPhoto + "\t";
+			cvgString5 += cvgAndRed.belowAvgCvgPhoto + "\t";
+			cvgString6 += cvgAndRed.networkCoverage + "\t";
+			
+			redString1 += cvgAndRed.avgRedundancy + "\t";
+			redString2 += cvgAndRed.aboveAvgRedCount + "\t";
+			redString3 += cvgAndRed.belowAvgRedCount + "\t";
+			redString4 += cvgAndRed.aboveAvgRedPhoto + "\t";
+			redString5 += cvgAndRed.belowAvgRedPhoto + "\t";
+			redString6 += cvgAndRed.networkRedundancy + "\t";
+		}
+		statsText += simTimeString + "\n";
+		statsText += photoString1 + "\n";
+		statsText += photoString2 + "\n";
+		statsText += photoString3 + "\n";
 		statsText += "\n";
-				
+		statsText += cvgString1 + "\n";
+		statsText += cvgString2 + "\n";
+		statsText += cvgString3 + "\n";
+		statsText += cvgString4 + "\n";
+		statsText += cvgString5 + "\n";
+		statsText += cvgString6 + "\n";
+		statsText += "\n";
+		statsText += redString1 + "\n";
+		statsText += redString2 + "\n";
+		statsText += redString3 + "\n";
+		statsText += redString4 + "\n";
+		statsText += redString5 + "\n";
+		statsText += redString6 + "\n";
+		
 				
 		write(statsText);
 		super.done();

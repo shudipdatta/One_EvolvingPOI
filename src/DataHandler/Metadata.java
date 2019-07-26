@@ -172,8 +172,8 @@ public class Metadata {
 		return MetadataManagement.FindPoiByID(tid, poiList);
 	}
 	
-	public void DeletePhotoByID(final int pid, Collection<Photo> photoList) {
-		MetadataManagement.DeletePhotoByID(pid, photoList);
+	public boolean DeletePhotoByID(final int pid, Collection<Photo> photoList) {
+		return MetadataManagement.DeletePhotoByID(pid, photoList);
 	}
 	
 	public Collection<Photo> FilteredExistingPhoto(ArrayList<Photo> photoList) {
