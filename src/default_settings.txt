@@ -2,12 +2,13 @@
 # set _JAVA_OPTIONS=-Xmx4096m
 
 ## Scenario settings
-Scenario.name = S-5_Photo_%%PhotoRouter.photo%%-Scenario_%%PhotoRouter.scenario%%-ActualPOI_%%PhotoRouter.poi%%
+Scenario.name = S_7-Photo_%%PhotoRouter.photo%%-Scenario_%%PhotoRouter.scenario%%-ActualPOI_%%PhotoRouter.poi%%
 Scenario.simulateConnections = false
 Scenario.updateInterval = 2.0
-## 31622400s == 8784h
-Scenario.endTime = 31622400
-#Scenario.endTime = 1000000
+## 43200s == 12h
+Scenario.endTime = 337500
+#Scenario.endTime = 168750
+#Scenario.endTime = 84375
 
 ## Interface-specific settings:
 # type : which interface class the interface belongs to
@@ -26,7 +27,7 @@ btInterface.transmitRange = 10
 # High speed, long range, interface for all nodes
 highspeedInterface.type = SimpleBroadcastInterface
 highspeedInterface.transmitSpeed = 512k
-highspeedInterface.transmitRange = 100
+highspeedInterface.transmitRange = 20
 
 
 ## Initializing router parameter
@@ -38,17 +39,19 @@ PhotoRouter.tpoi = 100
 PhotoRouter.poi = 50
 #PhotoRouter.photo = [1250;2500;5000;10000]
 PhotoRouter.photo = 5000
+PhotoRouter.kcvg = 1
 ## focus distance is 160/10 = 16 meter
 PhotoRouter.focus = 160
 ## length are in meters //similar as worldsize of movement model
-PhotoRouter.worldSize = 503209, 837297
+PhotoRouter.worldSize = 4500, 3400
 ## number of source nodes //similar as group1+group2 nodes
-PhotoRouter.nodeNum = 229
-PhotoRouter.photoLimit = 40
+PhotoRouter.nodeNum = 98
+#photoLimit : [25,50,100,200]
+PhotoRouter.photoLimit = 100
 ## cluster range is 240/10 = 24 meter
 PhotoRouter.clusterRange = 240
-## PhotoRouter Data Source: [Synthetic={1}***Infocom={2}***Geolife={3}***Asturies={4}]
-PhotoRouter.dataSource = 4
+## PhotoRouter Data Source: [Synthetic={1}***Infocom={2}***Geolife={3}]
+PhotoRouter.dataSource = 2
 ##PhotoRouter Scenario Type: [ No_limit={1}***Simple={2}***Simple_cluster={3}***Group_Cluster={4}***Group_Interest={5}***RAware={6}***SmartPhoto={7}***PhotoNet={8} ]
 PhotoRouter.scenario = [4;5;6;7;8]
 #PhotoRouter.scenario = 7
@@ -73,7 +76,7 @@ PhotoRouter.scenario = [4;5;6;7;8]
 
 
 ## Define 2 different node groups
-Scenario.nrofHostGroups = 9
+Scenario.nrofHostGroups = 13
 ## Common settings for all groups
 ## Message TTL of 300 minutes (5 hours)
 Group.msgTtl = 300
@@ -84,48 +87,65 @@ Group.bufferSize = 100M
 Group.nrofInterfaces = 1
 Group.interface1 = highspeedInterface
 
+## servers - 4	59	73	76	77	81	92
 
 ## Group1 (Pedestrians) specific settings
 Group1.groupID = p
-Group1.nrofHosts = 13
+Group1.nrofHosts = 4
 
 ## Group2 (Volunteer) specific settings
 Group2.groupID = v
-Group2.nrofHosts = 2
+Group2.nrofHosts = 1
 
 ## Group3 (Pedestrians) specific settings
 Group3.groupID = p
-Group3.nrofHosts = 2
+Group3.nrofHosts = 54
 
-## Group4 (Pedestrians) specific settings
+## Group4 (Volunteer) specific settings
 Group4.groupID = v
 Group4.nrofHosts = 1
 
 ## Group5 (Pedestrians) specific settings
 Group5.groupID = p
-Group5.nrofHosts = 152
+Group5.nrofHosts = 13
 
-## Group6 (Pedestrians) specific settings
+## Group6 (Volunteer) specific settings
 Group6.groupID = v
 Group6.nrofHosts = 1
 
 ## Group7 (Pedestrians) specific settings
 Group7.groupID = p
-Group7.nrofHosts = 7
+Group7.nrofHosts = 2
 
-## Group8 (Pedestrians) specific settings
+## Group8 (Volunteer) specific settings
 Group8.groupID = v
-Group8.nrofHosts = 1
+Group8.nrofHosts = 2
 
 ## Group9 (Pedestrians) specific settings
 Group9.groupID = p
-Group9.nrofHosts = 50
+Group9.nrofHosts = 3
+
+## Group10 (Volunteer) specific settings
+Group10.groupID = v
+Group10.nrofHosts = 1
+
+## Group11 (Pedestrians) specific settings
+Group11.groupID = p
+Group11.nrofHosts = 10
+
+## Group12 (Volunteer) specific settings
+Group12.groupID = v
+Group12.nrofHosts = 1
+
+## Group13 (Pedestrians) specific settings
+Group13.groupID = p
+Group13.nrofHosts = 5
 
 
 ## Message creation parameters 
 Events.nrof = 1
 Events1.class = ExternalEventsQueue
-Events1.filePath = reports/asturies_data/trace/asturies-er-1year-10m_shifted.one
+Events1.filePath = reports/infocom_data/trace/haggle-one-infocom2006-complete.tsv
 # (following settings are specific for the MessageEventGenerator class)
 # Creation interval in seconds (one new message every 25 to 35 seconds)
 #Events1.interval = 25,35
@@ -142,7 +162,7 @@ Report.nrofReports = 1
 ## length of the warm up period (simulated seconds)
 Report.warmup = 0
 ## default directory of reports (can be overridden per Report with output setting)
-Report.reportDir = reports/asturies_data/Actual_Hidden/
+Report.reportDir = reports/infocom_data/Actual_Hidden/
 ## Report classes to load
 Report.report1 = PhotoReport
 #Report.report2 = MessageStatsReport
@@ -152,7 +172,7 @@ Report.report1 = PhotoReport
 # seed for movement models' pseudo random number generator (default = 0)
 MovementModel.rngSeed = 5
 # World's size for Movement Models without implicit size (width, height; meters)
-MovementModel.worldSize = 503209, 837297
+MovementModel.worldSize = 4400, 3400
 # How long time to move hosts in the world before real simulation
 #MovementModel.warmup = 500
 

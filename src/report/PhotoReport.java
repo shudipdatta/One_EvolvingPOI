@@ -90,6 +90,7 @@ public class PhotoReport extends Report {
 	//overhead variables
 	public static long additionalPoiTime;
 	public static long algorithmTime;
+	public static long serverTime;
 	public static int TransferredMetadataCounter;
 	
 
@@ -121,6 +122,7 @@ public class PhotoReport extends Report {
 		
 		additionalPoiTime = 0;
 		algorithmTime = 0;
+		serverTime = 0;
 		TransferredMetadataCounter = 0;
 	}
 	
@@ -287,6 +289,9 @@ public class PhotoReport extends Report {
 		
 		statsText += "algorithmTime-----------------\t";
 		statsText += (algorithmTime-additionalPoiTime)/1000.00 + "\n"; //microsecond 
+			
+		statsText += "serverTime--------------------\t";
+		statsText += serverTime/1000.00 + "\n"; //microsecond
 		
 		statsText += "Total Transferred Metadata----\t";
 		statsText += TransferredMetadataCounter + "\n"; 

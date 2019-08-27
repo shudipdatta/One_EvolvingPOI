@@ -519,4 +519,40 @@ public class MetadataManagement {
 		}
 		return totalCvg;
 	}
+	
+	@SuppressWarnings("unchecked")
+	public static ArrayList<Metadata.Photo> KCvg(ArrayList<Metadata.POI> poiList, ArrayList<Metadata.Photo> deliveredPhotos, int kcvg, int theta) {
+		ArrayList<Metadata.Photo> reducedDeliveredPhotos = new ArrayList<Metadata.Photo>();
+		
+		for(Metadata.POI poi: poiList) {
+			if(poi != null) {
+				ArrayList<Metadata.Photo> photosForPoi = new ArrayList<Metadata.Photo>();
+				if (poi.tid >= 0) {
+					photosForPoi = (ArrayList<Photo>) FilteredPhoto(poi.tid, deliveredPhotos);
+				}
+				else {
+					for(int pid: poi.photoIDList) {
+						Photo p = FindPhotoByID(pid, deliveredPhotos);
+						if(p != null) photosForPoi.add(p);
+					}
+				}
+				ArrayList<Integer> lowerDirAngles = new ArrayList<Integer>();
+				for (Metadata.Photo photo: photosForPoi) {
+					int lowerDirAngle = GetLowerDirAngle(poi, photo, theta);
+					lowerDirAngles.add(lowerDirAngle);
+				}
+				int totalCoverage = TotalCoverage(lowerDirAngles, theta);
+				for (Metadata.Photo photo: photosForPoi) {
+					ArrayList<Integer> copyLowerDirAngles = (ArrayList<Integer>) lowerDirAngles.clone();
+					int lowerDirAngle = GetLowerDirAngle(poi, photo, theta);
+					copyLowerDirAngles.remove((Integer)lowerDirAngle);
+					int copyTotalCoverage = TotalCoverage(copyLowerDirAngles, theta);
+					if(totalCoverage == copyTotalCoverage) {
+						reducedDeliveredPhotos.add(photo);
+					}
+				}
+			}
+		}
+		return reducedDeliveredPhotos;
+	}
 }

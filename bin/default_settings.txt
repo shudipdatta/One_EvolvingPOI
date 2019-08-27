@@ -2,7 +2,7 @@
 # set _JAVA_OPTIONS=-Xmx4096m
 
 ## Scenario settings
-Scenario.name = S-5_Photo_%%PhotoRouter.photo%%-Scenario_%%PhotoRouter.scenario%%-ActualPOI_%%PhotoRouter.poi%%
+Scenario.name = S_1-Photo_%%PhotoRouter.photo%%-Scenario_%%PhotoRouter.scenario%%-ActualPOI_%%PhotoRouter.poi%%
 Scenario.simulateConnections = false
 Scenario.updateInterval = 2.0
 ## 31622400s == 8784h
@@ -37,7 +37,7 @@ PhotoRouter.tpoi = 100
 #PhotoRouter.poi = [25;50;75]
 PhotoRouter.poi = 50
 #PhotoRouter.photo = [1250;2500;5000;10000]
-PhotoRouter.photo = 5000
+PhotoRouter.photo = 2500
 ## focus distance is 160/10 = 16 meter
 PhotoRouter.focus = 160
 ## length are in meters //similar as worldsize of movement model
@@ -45,6 +45,7 @@ PhotoRouter.worldSize = 503209, 837297
 ## number of source nodes //similar as group1+group2 nodes
 PhotoRouter.nodeNum = 229
 PhotoRouter.photoLimit = 40
+PhotoRouter.kcvg = 1
 ## cluster range is 240/10 = 24 meter
 PhotoRouter.clusterRange = 240
 ## PhotoRouter Data Source: [Synthetic={1}***Infocom={2}***Geolife={3}***Asturies={4}]
@@ -73,7 +74,7 @@ PhotoRouter.scenario = [4;5;6;7;8]
 
 
 ## Define 2 different node groups
-Scenario.nrofHostGroups = 9
+Scenario.nrofHostGroups = 3
 ## Common settings for all groups
 ## Message TTL of 300 minutes (5 hours)
 Group.msgTtl = 300
@@ -89,37 +90,14 @@ Group.interface1 = highspeedInterface
 Group1.groupID = p
 Group1.nrofHosts = 13
 
-## Group2 (Volunteer) specific settings
+## Group1 (Volunteer) specific settings
 Group2.groupID = v
-Group2.nrofHosts = 2
+Group2.nrofHosts = 1
 
-## Group3 (Pedestrians) specific settings
+
+## Group2 (Pedestrians) specific settings
 Group3.groupID = p
-Group3.nrofHosts = 2
-
-## Group4 (Pedestrians) specific settings
-Group4.groupID = v
-Group4.nrofHosts = 1
-
-## Group5 (Pedestrians) specific settings
-Group5.groupID = p
-Group5.nrofHosts = 152
-
-## Group6 (Pedestrians) specific settings
-Group6.groupID = v
-Group6.nrofHosts = 1
-
-## Group7 (Pedestrians) specific settings
-Group7.groupID = p
-Group7.nrofHosts = 7
-
-## Group8 (Pedestrians) specific settings
-Group8.groupID = v
-Group8.nrofHosts = 1
-
-## Group9 (Pedestrians) specific settings
-Group9.groupID = p
-Group9.nrofHosts = 50
+Group3.nrofHosts = 215
 
 
 ## Message creation parameters 

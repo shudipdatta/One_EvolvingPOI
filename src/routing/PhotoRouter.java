@@ -80,6 +80,7 @@ public class PhotoRouter extends ActiveRouter {
 	public static final String WorldSize = "worldSize";
 	public static final String NodeNum = "nodeNum";
 	public static final String PhotoLimit = "photoLimit";
+	public static final String KCvg = "kcvg";
 	public static final String ClusterRange = "clusterRange";
 	public static final String DataSource = "dataSource";
 	public static final String Scenario = "scenario";
@@ -96,6 +97,7 @@ public class PhotoRouter extends ActiveRouter {
 	private int lengthY;
 	public int nodeNum;
 	public int photoLimit;
+	public int kcvg;
 	private PhotoRouter_NoLimit nolimitPR;
 	private PhotoRouter_Simple simplePR;
 	private PhotoRouter_Choose choosePR;
@@ -141,6 +143,7 @@ public class PhotoRouter extends ActiveRouter {
 		this.clusterRange = snwSettings.getInt(ClusterRange);
 		this.dataSource = snwSettings.getInt(DataSource);
 		this.scenario = snwSettings.getInt(Scenario);
+		this.kcvg = snwSettings.getInt(KCvg);
 		String[] worldSize = snwSettings.getSetting(WorldSize).split(",");
 		this.lengthX = Integer.parseInt(worldSize[0].trim()) * 10; //convert to pixel (assumption)
 		this.lengthY = Integer.parseInt(worldSize[1].trim()) * 10; //convert to pixel (assumption)
@@ -164,6 +167,7 @@ public class PhotoRouter extends ActiveRouter {
 		this.clusterRange = r.clusterRange;
 		this.dataSource = r.dataSource;
 		this.scenario = r.scenario;
+		this.kcvg = r.kcvg;
 		
 		this.poiList = new ArrayList<Metadata.POI>();
 		this.hiddenPoiList = new ArrayList<Metadata.POI>();
@@ -190,7 +194,7 @@ public class PhotoRouter extends ActiveRouter {
 			NodesFromDataset.Reset();
 		}
 		
-		GenerateScenario msgInfo = GenerateScenario.GetInstance(this.poi, this.tpoi-this.poi, this.theta, this.photo, this.lengthX, this.lengthY, this.focus, this.phi);
+		GenerateScenario msgInfo = GenerateScenario.GetInstance(this.poi, this.tpoi-this.poi, this.theta, this.photo, this.lengthX, this.lengthY, this.focus, this.phi, this.dataSource);
 		if(this.getHost().getAddress() == 0) {
 			PhotoReport.SetServerVariables(msgInfo);
 		}
@@ -231,9 +235,9 @@ public class PhotoRouter extends ActiveRouter {
 			//initial metadata calculations for poi based on current photos
 			metadata.SetInitialValues(poiList, photoList); //System.out.println(getHost().toString() + "_" + this.photoList.size());
 		}
-//		else {
-//			System.out.println(this.getHost().getAddress());
-//		}
+		else {
+			System.out.println(this.getHost().getAddress());
+		}
 	
 		//initialize router types
 		if(this.scenario == Constant.NoLimit) {

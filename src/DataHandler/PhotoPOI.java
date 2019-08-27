@@ -44,13 +44,13 @@ public class PhotoPOI {
 		public int hid;
 		
 		public Photo(int id, int x, int y, int direction, int poiIndex, int focus, int angle) {
-			this.ploc = new Point(x, y);
 			this.id = id;
+			this.ploc = new Point(x, y);
 			this.direction=direction;
+			this.tid=poiIndex;
 			this.focus=focus;
 			this.range=focus*2;
 			this.angle=angle;
-			this.tid=poiIndex;
 
 			CalculateEndPoints();
 		}

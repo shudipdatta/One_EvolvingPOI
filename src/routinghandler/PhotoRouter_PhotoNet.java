@@ -71,7 +71,11 @@ public class PhotoRouter_PhotoNet {
 		}			
 		//case 2: sender = relay, receiver = server
 		else if(from.toString().startsWith("v") == false && router.getHost().toString().startsWith("v") == true) {
+			long startTime = router.getUserTime();
 			messageTransferredRelayToServer(msg, from);
+			long endTime = router.getUserTime();
+			long diffTime = endTime - startTime;
+			PhotoReport.serverTime += diffTime;
 		}			
 		//case 2: sender = server, receiver = relay
 		else if(from.toString().startsWith("v") == true && router.getHost().toString().startsWith("v") == false) {

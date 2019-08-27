@@ -263,7 +263,8 @@ public class PhotoRouter_RAware {
 					
 					//get total photo coverage for this case
 					ArrayList<Metadata.Photo> allPhotos = new ArrayList<Metadata.Photo>();
-					allPhotos.addAll(thisDeliveredPhotos); //first entry is for command center
+					if (router.kcvg == 1) allPhotos.addAll(thisDeliveredPhotos); //first entry is for command center
+					else allPhotos.addAll(router.metadata.KCvg(router.poiList, thisDeliveredPhotos, router.kcvg));
 					for(Integer i=0; i<aCase.length; i++) {
 						if(aCase[i] == 1) {
 							if(i == aCase.length-1) allPhotos.addAll(rqstPhotoList); //last entry is for this node
@@ -319,7 +320,11 @@ public class PhotoRouter_RAware {
 		}			
 		//case 2: sender = relay, receiver = server
 		else if(from.toString().startsWith("v") == false && router.getHost().toString().startsWith("v") == true) {
+			long startTime = router.getUserTime();
 			messageTransferredRelayToServer(msg, from);
+			long endTime = router.getUserTime();
+			long diffTime = endTime - startTime;
+			PhotoReport.serverTime += diffTime;
 		}			
 		//case 2: sender = server, receiver = relay
 		else if(from.toString().startsWith("v") == true && router.getHost().toString().startsWith("v") == false) {
