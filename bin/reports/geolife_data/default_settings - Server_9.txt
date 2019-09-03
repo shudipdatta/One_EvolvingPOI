@@ -45,6 +45,7 @@ PhotoRouter.worldSize = 503209, 837297
 PhotoRouter.nodeNum = 182
 # limit: [12,25,50,100]
 PhotoRouter.photoLimit = 50
+PhotoRouter.kcvg = 1
 ## cluster range is 240/10 = 24 meter
 PhotoRouter.clusterRange = 240
 ## PhotoRouter Data Source: [Synthetic={1}***Infocom={2}***Geolife={3}]

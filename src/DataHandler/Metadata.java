@@ -42,7 +42,7 @@ public class Metadata {
 		}
 	}
 	
-	public class POI {
+	public class POI  implements Cloneable {
 		public int tid;
 		public Point tloc;
 		public int numPhoto;
@@ -83,6 +83,19 @@ public class Metadata {
 			this.photoIDList = new ArrayList<Integer>();
 			this.numOfPoint = 0;
 			this.centroid = new ArrayList<DPoint>();
+		}
+	
+		@Override
+		public POI clone() {
+            try {
+            	POI cloned = (POI)super.clone();
+            	cloned.clusters = new ArrayList<ChoosePhoto.PhotoGroup>();
+				return cloned;
+			} catch (CloneNotSupportedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			return null;
 		}
 	}
 	

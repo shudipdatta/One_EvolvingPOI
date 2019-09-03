@@ -660,10 +660,51 @@ public class PhotoRouter_Choose {
 		    		}
 		    	}
 		    }
+		    
+		    //clone the pois
+	    	ArrayList<Metadata.POI> clonedPoiList = new ArrayList<Metadata.POI>();
+		    if (router.kcvg == 2) {
+		    	for (Metadata.POI poi: PhotoReport.poiList) {
+		    		clonedPoiList.add(poi.clone());
+		    	}
+		    }
 
 			//update old or add newly added poi's clusters
 		    this.choosePhoto.DoOldGrouping(PhotoReport.poiList, newPhotoList);
 			this.choosePhoto.DoNewGrouping(PhotoReport.poiList, PhotoReport.photoList);
+			
+			//do clustering on the clonedPOIliset using remaining photos
+			if (router.kcvg == 2) {
+				//find the photos which are already in the cluster
+				ArrayList<Metadata.Photo> clusterdPhoto = new ArrayList<Metadata.Photo>();
+				for (Metadata.POI poi: PhotoReport.poiList) {
+					for(ChoosePhoto.PhotoGroup cluster: poi.clusters) {
+						clusterdPhoto.add(cluster.edges[0]);
+						clusterdPhoto.add(cluster.edges[1]);
+					}
+				}
+				//remove the clustered photos from the photolist
+				for (Metadata.Photo photo: clusterdPhoto) {
+					router.metadata.DeletePhotoByID(photo.pid, newPhotoList);
+					router.metadata.DeletePhotoByID(photo.pid, PhotoReport.photoList);
+				}
+				
+				//do clustering on clonedpois
+				this.choosePhoto.DoOldGrouping(clonedPoiList, newPhotoList);
+				this.choosePhoto.DoNewGrouping(clonedPoiList, PhotoReport.photoList);
+				
+				//again add the cluster photos to the photolist //forget about newphotolist, it will not be used anymore.
+				for (Metadata.Photo photo: clusterdPhoto) {
+					PhotoReport.photoList.add(photo);
+				}				
+				
+				//add cloned clustering to new clustering
+				for (int i=0; i<PhotoReport.poiList.size(); i++) {
+					ArrayList<ChoosePhoto.PhotoGroup> clonedClusters = clonedPoiList.get(i).clusters;
+					PhotoReport.poiList.get(i).clusters.addAll(clonedClusters);
+				}
+			}
+			
 			
 			//from all eligible photos, decide which to fetch based on the clusters.
 			for (Entry<Metadata.POI, ArrayList<Metadata.Photo>> entry : eligiblePhotos.entrySet()) { 

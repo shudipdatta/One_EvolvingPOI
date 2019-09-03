@@ -2,7 +2,7 @@
 # set _JAVA_OPTIONS=-Xmx4096m
 
 ## Scenario settings
-Scenario.name = S_1-Photo_%%PhotoRouter.photo%%-Scenario_%%PhotoRouter.scenario%%-ActualPOI_%%PhotoRouter.poi%%
+Scenario.name = K_2-Photo_%%PhotoRouter.photo%%-Scenario_%%PhotoRouter.scenario%%-ActualPOI_%%PhotoRouter.poi%%
 Scenario.simulateConnections = false
 Scenario.updateInterval = 2.0
 ## 31622400s == 8784h
@@ -37,15 +37,15 @@ PhotoRouter.tpoi = 100
 #PhotoRouter.poi = [25;50;75]
 PhotoRouter.poi = 50
 #PhotoRouter.photo = [1250;2500;5000;10000]
-PhotoRouter.photo = 2500
+PhotoRouter.photo = 5000
 ## focus distance is 160/10 = 16 meter
 PhotoRouter.focus = 160
 ## length are in meters //similar as worldsize of movement model
 PhotoRouter.worldSize = 503209, 837297
 ## number of source nodes //similar as group1+group2 nodes
 PhotoRouter.nodeNum = 229
-PhotoRouter.photoLimit = 40
-PhotoRouter.kcvg = 1
+PhotoRouter.photoLimit = 80
+PhotoRouter.kcvg = 2
 ## cluster range is 240/10 = 24 meter
 PhotoRouter.clusterRange = 240
 ## PhotoRouter Data Source: [Synthetic={1}***Infocom={2}***Geolife={3}***Asturies={4}]
@@ -92,12 +92,12 @@ Group1.nrofHosts = 13
 
 ## Group1 (Volunteer) specific settings
 Group2.groupID = v
-Group2.nrofHosts = 1
+Group2.nrofHosts = 2
 
 
 ## Group2 (Pedestrians) specific settings
 Group3.groupID = p
-Group3.nrofHosts = 215
+Group3.nrofHosts = 214
 
 
 ## Message creation parameters 
