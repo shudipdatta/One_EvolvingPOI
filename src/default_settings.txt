@@ -2,7 +2,7 @@
 # set _JAVA_OPTIONS=-Xmx4096m
 
 ## Scenario settings
-Scenario.name = S_7-Photo_%%PhotoRouter.photo%%-Scenario_%%PhotoRouter.scenario%%-ActualPOI_%%PhotoRouter.poi%%
+Scenario.name = S_9-Photo_%%PhotoRouter.photo%%-Scenario_%%PhotoRouter.scenario%%-ActualPOI_%%PhotoRouter.poi%%
 Scenario.simulateConnections = false
 Scenario.updateInterval = 2.0
 ## 43200s == 12h
@@ -76,7 +76,7 @@ PhotoRouter.scenario = [4;5;6;7;8]
 
 
 ## Define 2 different node groups
-Scenario.nrofHostGroups = 13
+Scenario.nrofHostGroups = 17
 ## Common settings for all groups
 ## Message TTL of 300 minutes (5 hours)
 Group.msgTtl = 300
@@ -87,11 +87,11 @@ Group.bufferSize = 100M
 Group.nrofInterfaces = 1
 Group.interface1 = highspeedInterface
 
-## servers - 4	59	73	76	77	81	92
+## servers - 2	4	59	73	76	77	81	87	92
 
 ## Group1 (Pedestrians) specific settings
 Group1.groupID = p
-Group1.nrofHosts = 4
+Group1.nrofHosts = 2
 
 ## Group2 (Volunteer) specific settings
 Group2.groupID = v
@@ -99,7 +99,7 @@ Group2.nrofHosts = 1
 
 ## Group3 (Pedestrians) specific settings
 Group3.groupID = p
-Group3.nrofHosts = 54
+Group3.nrofHosts = 1
 
 ## Group4 (Volunteer) specific settings
 Group4.groupID = v
@@ -107,7 +107,7 @@ Group4.nrofHosts = 1
 
 ## Group5 (Pedestrians) specific settings
 Group5.groupID = p
-Group5.nrofHosts = 13
+Group5.nrofHosts = 54
 
 ## Group6 (Volunteer) specific settings
 Group6.groupID = v
@@ -115,23 +115,23 @@ Group6.nrofHosts = 1
 
 ## Group7 (Pedestrians) specific settings
 Group7.groupID = p
-Group7.nrofHosts = 2
+Group7.nrofHosts = 13
 
 ## Group8 (Volunteer) specific settings
 Group8.groupID = v
-Group8.nrofHosts = 2
+Group8.nrofHosts = 1
 
 ## Group9 (Pedestrians) specific settings
 Group9.groupID = p
-Group9.nrofHosts = 3
+Group9.nrofHosts = 2
 
 ## Group10 (Volunteer) specific settings
 Group10.groupID = v
-Group10.nrofHosts = 1
+Group10.nrofHosts = 2
 
 ## Group11 (Pedestrians) specific settings
 Group11.groupID = p
-Group11.nrofHosts = 10
+Group11.nrofHosts = 3
 
 ## Group12 (Volunteer) specific settings
 Group12.groupID = v
@@ -140,6 +140,22 @@ Group12.nrofHosts = 1
 ## Group13 (Pedestrians) specific settings
 Group13.groupID = p
 Group13.nrofHosts = 5
+
+## Group14 (Volunteer) specific settings
+Group14.groupID = v
+Group14.nrofHosts = 1
+
+## Group15 (Pedestrians) specific settings
+Group15.groupID = p
+Group15.nrofHosts = 4
+
+## Group16 (Volunteer) specific settings
+Group16.groupID = v
+Group16.nrofHosts = 1
+
+## Group17 (Pedestrians) specific settings
+Group17.groupID = p
+Group17.nrofHosts = 5
 
 
 ## Message creation parameters 
