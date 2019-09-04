@@ -51,7 +51,7 @@ PhotoRouter.clusterRange = 240
 ## PhotoRouter Data Source: [Synthetic={1}***Infocom={2}***Geolife={3}***Asturies={4}]
 PhotoRouter.dataSource = 4
 ##PhotoRouter Scenario Type: [ No_limit={1}***Simple={2}***Simple_cluster={3}***Group_Cluster={4}***Group_Interest={5}***RAware={6}***SmartPhoto={7}***PhotoNet={8} ]
-PhotoRouter.scenario = [5;6;8]
+PhotoRouter.scenario = [7;5;6;8]
 #PhotoRouter.scenario = 7
 
 ## Group-specific settings:
