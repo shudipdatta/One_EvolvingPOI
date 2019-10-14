@@ -6,9 +6,10 @@ import java.util.Comparator;
 
 public class SmartPhoto {
 	
-	int theta;
-	public SmartPhoto(int theta) {
+	int theta, kcvg;
+	public SmartPhoto(int theta, int kcvg) {
 		this.theta = theta;
+		this.kcvg = kcvg;
 	}
 
 	public class PhotoSelectionSequence implements Cloneable {
@@ -38,10 +39,12 @@ public class SmartPhoto {
 		int startAngle;
 		int endAngle;
 		int totalAngle;
+		int alive;
 		boolean isCovered;
 		
 		public Element() {
 			isCovered = false;
+			alive = kcvg;
 		}
 	}
 	
@@ -152,8 +155,13 @@ public class SmartPhoto {
 			for(Element e: elemList) {
 				for (PhotoElement photoElem: photoElemList) {
 					if(photoElem.elementList.contains(e)) {
-						photoElem.elementList.remove(e);
-						photoElem.totalCvg -= e.totalAngle;
+						if(e.alive > 1) {
+							e.alive--;
+						}
+						else {
+							photoElem.elementList.remove(e);
+							photoElem.totalCvg -= e.totalAngle;
+						}
 					}
 				}
 			}
@@ -173,8 +181,13 @@ public class SmartPhoto {
 					for(Element e: elemList) {
 						for (PhotoElement photoElem: photoElemList) {
 							if(existedPhotoElem.photo.pid != photoElem.photo.pid && photoElem.elementList.contains(e)) {
-								photoElem.elementList.remove(e);
-								photoElem.totalCvg -= e.totalAngle;
+								if(e.alive > 1) {
+									e.alive--;
+								}
+								else {
+									photoElem.elementList.remove(e);
+									photoElem.totalCvg -= e.totalAngle;
+								}
 							}
 						}
 					}
@@ -193,8 +206,13 @@ public class SmartPhoto {
 				for(Element e: elemList) {
 					for (PhotoElement photoElem: photoElemList) {
 						if(photoElem.elementList.contains(e)) {
-							photoElem.elementList.remove(e);
-							photoElem.totalCvg -= e.totalAngle;
+							if(e.alive > 1) {
+								e.alive--;
+							}
+							else {
+								photoElem.elementList.remove(e);
+								photoElem.totalCvg -= e.totalAngle;
+							}
 						}
 					}
 				}

@@ -11,6 +11,7 @@ import java.util.Map.Entry;
 import DataHandler.Constant;
 import DataHandler.Metadata;
 import DataHandler.SmartPhoto;
+import DataHandler.Metadata.Photo;
 import DataHandler.SmartPhoto.PhotoElement;
 import DataHandler.SmartPhoto.PhotoSelectionSequence;
 import core.Connection;
@@ -44,7 +45,7 @@ public class PhotoRouter_SmartPhoto {
 	
 	public PhotoRouter_SmartPhoto (PhotoRouter router) {
 		this.router = router;
-		this.smartPhoto = new SmartPhoto(router.theta);
+		this.smartPhoto = new SmartPhoto(router.theta, router.kcvg);
 		this.rcvdPhotoSelectionSeq = this.smartPhoto.new PhotoSelectionSequence();
 	}
 	
@@ -698,7 +699,18 @@ public class PhotoRouter_SmartPhoto {
 		    PhotoSelectionSequence photoSelectionSec = smartPhoto.new PhotoSelectionSequence();
 		    for(Entry<Metadata.POI, Double> entry: sortedPois) {
 		    	Metadata.POI poi = entry.getKey();
-		    	ArrayList<Metadata.Photo> photoList = (ArrayList<Metadata.Photo>) router.metadata.FilteredPhoto(poi.tid, PhotoReport.photoList);
+		    	ArrayList<Metadata.Photo> photoList = new ArrayList<Metadata.Photo>();
+		    	
+		    	if (poi.tid >= 0) {
+		    		photoList = (ArrayList<Photo>) router.metadata.FilteredPhoto(poi.tid, PhotoReport.photoList);
+				}
+				else {
+					for(int pid: poi.photoIDList) {
+						Photo p = router.metadata.FindPhotoByID(pid, PhotoReport.photoList);
+						if(p != null) photoList.add(p);
+					}
+				}
+		    	
 		    	ArrayList<PhotoElement> photoElementList =  smartPhoto.calculatePhotoSelectionSequence(poi, photoList);
 		    	
 		    	for(PhotoElement photoElem: photoElementList) {

@@ -2,7 +2,7 @@
 # set _JAVA_OPTIONS=-Xmx4096m
 
 ## Scenario settings
-Scenario.name = K_2-Photo_%%PhotoRouter.photo%%-Scenario_%%PhotoRouter.scenario%%-ActualPOI_%%PhotoRouter.poi%%
+Scenario.name = Photo_%%PhotoRouter.photo%%-Scenario_%%PhotoRouter.scenario%%-ActualPOI_%%PhotoRouter.poi%%-K_%%PhotoRouter.kcvg%%
 Scenario.simulateConnections = false
 Scenario.updateInterval = 2.0
 ## 31622400s == 8784h
@@ -44,6 +44,7 @@ PhotoRouter.focus = 160
 PhotoRouter.worldSize = 503209, 837297
 ## number of source nodes //similar as group1+group2 nodes
 PhotoRouter.nodeNum = 229
+## photolimit 10, 20, 40, 80 for k=1
 PhotoRouter.photoLimit = 80
 PhotoRouter.kcvg = 2
 ## cluster range is 240/10 = 24 meter
@@ -51,7 +52,7 @@ PhotoRouter.clusterRange = 240
 ## PhotoRouter Data Source: [Synthetic={1}***Infocom={2}***Geolife={3}***Asturies={4}]
 PhotoRouter.dataSource = 4
 ##PhotoRouter Scenario Type: [ No_limit={1}***Simple={2}***Simple_cluster={3}***Group_Cluster={4}***Group_Interest={5}***RAware={6}***SmartPhoto={7}***PhotoNet={8} ]
-PhotoRouter.scenario = [7;5;6;8]
+PhotoRouter.scenario = [7;4;5;6;8]
 #PhotoRouter.scenario = 7
 
 ## Group-specific settings:

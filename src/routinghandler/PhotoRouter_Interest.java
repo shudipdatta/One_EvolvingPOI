@@ -657,23 +657,32 @@ public class PhotoRouter_Interest {
 		    	}
 		    }
 		    
-		    //clone the pois
-	    	ArrayList<Metadata.POI> clonedPoiList = new ArrayList<Metadata.POI>();
-		    if (router.kcvg == 2) {
-		    	for (Metadata.POI poi: PhotoReport.poiList) {
+		  //save the initial state of the poilist
+	    	ArrayList<Metadata.POI> initPoiList = new ArrayList<Metadata.POI>();
+	    	for (Metadata.POI poi: PhotoReport.poiList) {
+	    		initPoiList.add(poi.clone());
+	    	}
+		    //clone the photolist
+	    	ArrayList<Metadata.Photo> clonedPhotoList = new ArrayList<Metadata.Photo>();		    
+	    	for (Metadata.Photo photo: PhotoReport.photoList) {
+	    		clonedPhotoList.add(photo.clone());
+	    	}
+			
+	    	//do clustering on the clonedPOIliset using remaining photos
+			for (int k=1; k<=router.kcvg; k++) {
+				//clone the pois
+		    	ArrayList<Metadata.POI> clonedPoiList = new ArrayList<Metadata.POI>();
+		    	for (Metadata.POI poi: initPoiList) {
 		    		clonedPoiList.add(poi.clone());
 		    	}
-		    }
-
-			//update old or add newly added poi's clusters
-		    this.choosePhoto.DoOldGrouping(PhotoReport.poiList, newPhotoList);
-			this.choosePhoto.DoNewGrouping(PhotoReport.poiList, PhotoReport.photoList);
-			
-			//do clustering on the clonedPOIliset using remaining photos
-			if (router.kcvg == 2) {
+		    	
+				//do clustering on clonedpois
+				this.choosePhoto.DoOldGrouping(clonedPoiList, newPhotoList);
+				this.choosePhoto.DoNewGrouping(clonedPoiList, clonedPhotoList);
+								
 				//find the photos which are already in the cluster
 				ArrayList<Metadata.Photo> clusterdPhoto = new ArrayList<Metadata.Photo>();
-				for (Metadata.POI poi: PhotoReport.poiList) {
+				for (Metadata.POI poi: clonedPoiList) {
 					for(ChoosePhoto.PhotoGroup cluster: poi.clusters) {
 						clusterdPhoto.add(cluster.edges[0]);
 						clusterdPhoto.add(cluster.edges[1]);
@@ -682,17 +691,8 @@ public class PhotoRouter_Interest {
 				//remove the clustered photos from the photolist
 				for (Metadata.Photo photo: clusterdPhoto) {
 					router.metadata.DeletePhotoByID(photo.pid, newPhotoList);
-					router.metadata.DeletePhotoByID(photo.pid, PhotoReport.photoList);
-				}
-				
-				//do clustering on clonedpois
-				this.choosePhoto.DoOldGrouping(clonedPoiList, newPhotoList);
-				this.choosePhoto.DoNewGrouping(clonedPoiList, PhotoReport.photoList);
-				
-				//again add the cluster photos to the photolist //forget about newphotolist, it will not be used anymore.
-				for (Metadata.Photo photo: clusterdPhoto) {
-					PhotoReport.photoList.add(photo);
-				}				
+					router.metadata.DeletePhotoByID(photo.pid, clonedPhotoList);
+				}			
 				
 				//add cloned clustering to new clustering
 				for (int i=0; i<PhotoReport.poiList.size(); i++) {
@@ -709,9 +709,10 @@ public class PhotoRouter_Interest {
 					for(Metadata.Photo p: entry.getValue()) {
 						if( (p.pid == cluster.edges[0].pid || p.pid == cluster.edges[1].pid) && sequenceMap.containsKey(p) == false) {
 							int cvg = router.metadata.CalculateProbableCoverage(Constant.IF_ADDED, poi, p);
-							if(cvg > 0) {
-								sequenceMap.put(p, Constant.Phi * priorityMap.get(poi) + (1-Constant.Phi) * (360-poi.cvgTotal));
-							}
+							sequenceMap.put(p, Constant.Phi * priorityMap.get(poi) + (1-Constant.Phi) * cvg);
+//							if(cvg > 0) {
+//								sequenceMap.put(p, Constant.Phi * priorityMap.get(poi) + (1-Constant.Phi) * (360-poi.cvgTotal));
+//							}
 						}
 					}
 				}
@@ -723,10 +724,11 @@ public class PhotoRouter_Interest {
 							
 				for(Metadata.Photo photo: photos) {
 					if(sequenceMap.containsKey(photo) == false) {
-						int cvg = router.metadata.CalculateProbableCoverage(Constant.IF_ADDED, poi, photo);
-						if(cvg > 0) {
-							sequenceMap.put(photo,  0.0);
-						}
+						sequenceMap.put(photo,  0.0);
+//						int cvg = router.metadata.CalculateProbableCoverage(Constant.IF_ADDED, poi, photo);
+//						if(cvg > 0) {
+//							sequenceMap.put(photo,  0.0);
+//						}
 					}
 				}
 			}
@@ -775,10 +777,10 @@ public class PhotoRouter_Interest {
 		    				&& photoGroupSec.photoIds.contains(p0.pid) == false) {
 		    			
 		    			int cvg = router.metadata.CalculateProbableCoverage(Constant.IF_ADDED, poi, p0);
-						if(cvg > 0) {
+//						if(cvg > 0) {
 			    			photoGroupSec.photoIds.add(p0.pid);
 			    			photoGroupSec.priority.add(Constant.Phi * priorityMap.get(poi) + (1-Constant.Phi) * cvg);
-						}
+//						}
 		    		}
 		    		Metadata.Photo p1 = router.metadata.FindPhotoByID(cluster.edges[1].pid, PhotoReport.photoList);
 		    		if(p1.exist == false 
@@ -786,10 +788,10 @@ public class PhotoRouter_Interest {
 		    				&& photoGroupSec.photoIds.contains(p1.pid) == false) {
 		    			
 		    			int cvg = router.metadata.CalculateProbableCoverage(Constant.IF_ADDED, poi, p1);
-						if(cvg > 0) {
+//						if(cvg > 0) {
 			    			photoGroupSec.photoIds.add(p1.pid);
 			    			photoGroupSec.priority.add(Constant.Phi * priorityMap.get(poi) + (1-Constant.Phi) * cvg);
-						}
+//						}
 		    		}
 		    	}
 		    }
