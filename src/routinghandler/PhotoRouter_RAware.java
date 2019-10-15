@@ -263,15 +263,16 @@ public class PhotoRouter_RAware {
 					
 					//get total photo coverage for this case
 					ArrayList<Metadata.Photo> allPhotos = new ArrayList<Metadata.Photo>();
-					if (router.kcvg == 1) allPhotos.addAll(thisDeliveredPhotos); //first entry is for command center
-					else allPhotos.addAll(router.metadata.KCvg(router.poiList, thisDeliveredPhotos, router.kcvg));
+					allPhotos.addAll(thisDeliveredPhotos); //first entry is for command center
+					allPhotos.add(photo);
 					for(Integer i=0; i<aCase.length; i++) {
 						if(aCase[i] == 1) {
 							if(i == aCase.length-1) allPhotos.addAll(rqstPhotoList); //last entry is for this node
 							else allPhotos.addAll(cacheValues.get(i));
 						}
 					}
-					int sumCvg = router.metadata.TotalCoverageByPhotoSet(router.poiList, allPhotos);
+//					int sumCvg = router.metadata.TotalCoverageByPhotoSet(router.poiList, allPhotos);
+					int sumCvg = router.metadata.TotalCoverageByDegreeVal(router.poiList, allPhotos, router.kcvg);
 					
 					//get probability product for this case
 					Double mulProb = 1.0;
@@ -289,7 +290,8 @@ public class PhotoRouter_RAware {
 					maxExPhoto = photo;
 				}
 			}
-			if(maxExPhoto == null) break; //no more benefit can be acheived
+			if(maxExPhoto == null) 
+				break; //no more benefit can be acheived
 			rqstPhotoList.add(maxExPhoto);
 			selectionPool.remove(maxExPhoto);
 			//if(rqstPhotoList.size() > router.photoLimit) break; //storage is full

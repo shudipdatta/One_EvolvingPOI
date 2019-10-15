@@ -233,7 +233,7 @@ public class Metadata {
 		return MetadataManagement.TotalCoverageByPhotoSet(poiList, photoList, theta);
 	}
 	
-	public ArrayList<Metadata.Photo> KCvg(ArrayList<Metadata.POI> poiList, ArrayList<Metadata.Photo> deliveredPhotos, int kcvg) {
-		return MetadataManagement.KCvg(poiList, deliveredPhotos, kcvg, theta);
+	public int TotalCoverageByDegreeVal(ArrayList<Metadata.POI> poiList, ArrayList<Metadata.Photo> photoList, int kcvg) {
+		return MetadataManagement.TotalCoverageByDegreeVal(poiList, photoList, kcvg, theta);
 	}
 }

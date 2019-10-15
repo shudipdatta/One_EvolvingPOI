@@ -472,23 +472,6 @@ public class MetadataManagement {
 		else return 0;
 	}
 	
-//	public static int TotalCoverageByPhotoSet(ArrayList<Metadata.POI> poiList, ArrayList<Metadata.Photo> photoList, int theta) {
-//		Map<Integer, ArrayList<Integer>> poiPhotoDegreeMap = new HashMap<Integer, ArrayList<Integer>>();
-//		Map<Integer, Metadata.POI> idPoiMap = new HashMap<Integer, Metadata.POI>();
-//		for(Metadata.Photo photo: photoList) {
-//			if(poiPhotoDegreeMap.containsKey(photo.tid) == false) {
-//				poiPhotoDegreeMap.put(photo.tid, new ArrayList<Integer>());
-//				idPoiMap.put(photo.tid, FindPoiByID(photo.tid, poiList));
-//			}
-//			poiPhotoDegreeMap.get(photo.tid).add(GetLowerDirAngle(idPoiMap.get(photo.tid), photo, theta));
-//		}
-//		int totalCvg = 0;
-//		for(Entry<Integer, ArrayList<Integer>> entry: poiPhotoDegreeMap.entrySet()) {
-//			totalCvg += TotalCoverage(entry.getValue(), theta);
-//		}
-//		return totalCvg;
-//	}
-	
 	public static int TotalCoverageByPhotoSet(ArrayList<Metadata.POI> poiList, ArrayList<Metadata.Photo> photoList, int theta) {
 		Map<Integer, ArrayList<Integer>> poiPhotoDegreeMap = new HashMap<Integer, ArrayList<Integer>>();
 		for(Metadata.Photo photo: photoList) {
@@ -520,39 +503,49 @@ public class MetadataManagement {
 		return totalCvg;
 	}
 	
-	@SuppressWarnings("unchecked")
-	public static ArrayList<Metadata.Photo> KCvg(ArrayList<Metadata.POI> poiList, ArrayList<Metadata.Photo> deliveredPhotos, int kcvg, int theta) {
-		ArrayList<Metadata.Photo> reducedDeliveredPhotos = new ArrayList<Metadata.Photo>();
-		
-		for(Metadata.POI poi: poiList) {
-			if(poi != null) {
-				ArrayList<Metadata.Photo> photosForPoi = new ArrayList<Metadata.Photo>();
-				if (poi.tid >= 0) {
-					photosForPoi = (ArrayList<Photo>) FilteredPhoto(poi.tid, deliveredPhotos);
+	public static int TotalCoverageByDegreeVal(ArrayList<Metadata.POI> poiList, ArrayList<Metadata.Photo> photoList, int kcvg, int theta) {
+		Map<Integer, ArrayList<Integer>> poiPhotoDegreeMap = new HashMap<Integer, ArrayList<Integer>>();
+		for(Metadata.Photo photo: photoList) {
+			
+			ArrayList<Metadata.POI> pois = new ArrayList<Metadata.POI>();
+			if (photo.tid != -1) {
+				pois.add(FindPoiByID(photo.tid, poiList));
+			}
+			else {
+				for(Integer uid: photo.uid) {
+					pois.add(FindPoiByID(uid, poiList));
 				}
-				else {
-					for(int pid: poi.photoIDList) {
-						Photo p = FindPhotoByID(pid, deliveredPhotos);
-						if(p != null) photosForPoi.add(p);
-					}
-				}
-				ArrayList<Integer> lowerDirAngles = new ArrayList<Integer>();
-				for (Metadata.Photo photo: photosForPoi) {
+			}
+			for(Metadata.POI poi: pois) {
+				if(poi != null) { //only take known photos
 					int lowerDirAngle = GetLowerDirAngle(poi, photo, theta);
-					lowerDirAngles.add(lowerDirAngle);
-				}
-				int totalCoverage = TotalCoverage(lowerDirAngles, theta);
-				for (Metadata.Photo photo: photosForPoi) {
-					ArrayList<Integer> copyLowerDirAngles = (ArrayList<Integer>) lowerDirAngles.clone();
-					int lowerDirAngle = GetLowerDirAngle(poi, photo, theta);
-					copyLowerDirAngles.remove((Integer)lowerDirAngle);
-					int copyTotalCoverage = TotalCoverage(copyLowerDirAngles, theta);
-					if(totalCoverage == copyTotalCoverage) {
-						reducedDeliveredPhotos.add(photo);
+					if(poiPhotoDegreeMap.containsKey(poi.tid) == false) {
+						poiPhotoDegreeMap.put(poi.tid, new ArrayList<Integer>());
 					}
+					poiPhotoDegreeMap.get(poi.tid).add(lowerDirAngle);
 				}
 			}
 		}
-		return reducedDeliveredPhotos;
+		
+		int totalCvg = 0;
+		for(Entry<Integer, ArrayList<Integer>> entry: poiPhotoDegreeMap.entrySet()) {
+			//instead of the commented line below, we do that to find out the total k cvg
+			int[] cvgDegree = new int[360];
+			for(int c=0; c<cvgDegree.length; c++) {
+				cvgDegree[c] = 0;
+			}
+			for (int degree: entry.getValue()) {
+				for (int d=degree; d<degree+theta; d++) {
+					if (cvgDegree[d % cvgDegree.length] < kcvg) cvgDegree[d % cvgDegree.length]++;
+				}
+			}
+			int thisCvg = 0;
+			for(int c=0; c<cvgDegree.length; c++) {
+				thisCvg += cvgDegree[c];
+			}
+			totalCvg += thisCvg;
+			//totalCvg += TotalCoverage(entry.getValue(), theta);
+		}
+		return totalCvg;
 	}
 }
