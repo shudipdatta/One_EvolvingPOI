@@ -19,7 +19,7 @@ public class Metadata {
 	}	
 	
 	//both POI and Photo id starts with '1'. Because negative value indicates undefined poi and photo.
-	int theta;
+	private int theta;
 	public Metadata(int theta) {
 		this.theta = theta;
 	}
@@ -162,19 +162,19 @@ public class Metadata {
 	}
 	
 	public void SetInitialValues(ArrayList<Metadata.POI> poiList, ArrayList<Metadata.Photo> photoList) {
-		MetadataManagement.SetInitialValues(poiList, photoList, theta);
+		MetadataManagement.SetInitialValues(poiList, photoList, getTheta());
 	}
 	
 	public void CalculateAdditionalPOI(ArrayList<POI> poiList, ArrayList<Photo> photoList) {
-		MetadataManagement.CalculateAdditionalPOI(poiList, photoList, theta);
+		MetadataManagement.CalculateAdditionalPOI(poiList, photoList, getTheta());
 	}
 	
 	public void ModifyClusterPOI(ArrayList<POI> poiList, ArrayList<Photo> photoList, ArrayList<Photo> newPhotoList,  ArrayList<UndefCluster> undefCluster, int clusterRange) {
-		MetadataManagement.ModifyClusterPOI(poiList, photoList, newPhotoList, theta, undefCluster, clusterRange);
+		MetadataManagement.ModifyClusterPOI(poiList, photoList, newPhotoList, getTheta(), undefCluster, clusterRange);
 	}
 	
 	public void ModifyUndefinedPOI(ArrayList<POI> poiList, ArrayList<Photo> photoList, ArrayList<Photo> newPhotoList) {
-		MetadataManagement.ModifyUndefinedPOI(poiList, photoList, newPhotoList, theta);
+		MetadataManagement.ModifyUndefinedPOI(poiList, photoList, newPhotoList, getTheta());
 	}
 	
 	public Metadata.Photo FindPhotoByID(final int pid, Collection<Photo> photoList) {
@@ -214,26 +214,30 @@ public class Metadata {
 	}
 	
 	public int GetLowerDirAngle(POI poi, Photo photo) {
-		return MetadataManagement.GetLowerDirAngle(poi, photo, theta);
+		return MetadataManagement.GetLowerDirAngle(poi, photo, getTheta());
 	}
 	
 	public int TotalCoverage(ArrayList<Integer> lowerDirAngles) {
-		return MetadataManagement.TotalCoverage(lowerDirAngles, theta);
+		return MetadataManagement.TotalCoverage(lowerDirAngles, getTheta());
 	}
 	
 	public int RedundantCoverage(ArrayList<Integer> lowerDirAngles) {
-		return MetadataManagement.RedundantCoverage(lowerDirAngles, theta);
+		return MetadataManagement.RedundantCoverage(lowerDirAngles, getTheta());
 	}
 	
 	public int CalculateProbableCoverage(String operation, POI poi, Photo photo) {
-		return MetadataManagement.CalculateProbableCoverage(operation, poi, photo, theta);
+		return MetadataManagement.CalculateProbableCoverage(operation, poi, photo, getTheta());
 	}
 	
 	public int TotalCoverageByPhotoSet(ArrayList<Metadata.POI> poiList, ArrayList<Metadata.Photo> photoList) {
-		return MetadataManagement.TotalCoverageByPhotoSet(poiList, photoList, theta);
+		return MetadataManagement.TotalCoverageByPhotoSet(poiList, photoList, getTheta());
 	}
 	
 	public int TotalCoverageByDegreeVal(ArrayList<Metadata.POI> poiList, ArrayList<Metadata.Photo> photoList, int kcvg) {
-		return MetadataManagement.TotalCoverageByDegreeVal(poiList, photoList, kcvg, theta);
+		return MetadataManagement.TotalCoverageByDegreeVal(poiList, photoList, kcvg, getTheta());
+	}
+
+	public int getTheta() {
+		return theta;
 	}
 }

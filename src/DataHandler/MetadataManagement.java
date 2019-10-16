@@ -530,12 +530,13 @@ public class MetadataManagement {
 		int totalCvg = 0;
 		for(Entry<Integer, ArrayList<Integer>> entry: poiPhotoDegreeMap.entrySet()) {
 			//instead of the commented line below, we do that to find out the total k cvg
+			//totalCvg += TotalCoverage(entry.getValue(), theta);
 			int[] cvgDegree = new int[360];
 			for(int c=0; c<cvgDegree.length; c++) {
 				cvgDegree[c] = 0;
 			}
 			for (int degree: entry.getValue()) {
-				for (int d=degree; d<degree+theta; d++) {
+				for (int d=degree; d<degree+2*theta; d++) {
 					if (cvgDegree[d % cvgDegree.length] < kcvg) cvgDegree[d % cvgDegree.length]++;
 				}
 			}
@@ -544,7 +545,6 @@ public class MetadataManagement {
 				thisCvg += cvgDegree[c];
 			}
 			totalCvg += thisCvg;
-			//totalCvg += TotalCoverage(entry.getValue(), theta);
 		}
 		return totalCvg;
 	}

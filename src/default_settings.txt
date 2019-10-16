@@ -2,13 +2,14 @@
 # set _JAVA_OPTIONS=-Xmx4096m
 
 ## Scenario settings
-Scenario.name = Photo_%%PhotoRouter.photo%%-Scenario_%%PhotoRouter.scenario%%-ActualPOI_%%PhotoRouter.poi%%-K_%%PhotoRouter.kcvg%%
+Scenario.name = Test-Photo_%%PhotoRouter.photo%%-Scenario_%%PhotoRouter.scenario%%-ActualPOI_%%PhotoRouter.poi%%-K_%%PhotoRouter.kcvg%%
 Scenario.simulateConnections = false
 Scenario.updateInterval = 2.0
 ## 43200s == 12h
-Scenario.endTime = 337500
+#Scenario.endTime = 337500
 #Scenario.endTime = 168750
 #Scenario.endTime = 84375
+Scenario.endTime = 42375
 
 ## Interface-specific settings:
 # type : which interface class the interface belongs to
@@ -38,8 +39,8 @@ PhotoRouter.tpoi = 100
 #PhotoRouter.poi = [25;50;75]
 PhotoRouter.poi = 50
 #PhotoRouter.photo = [1250;2500;5000;10000]
-PhotoRouter.photo = 5000
-PhotoRouter.kcvg = 2
+PhotoRouter.photo = 1250
+PhotoRouter.kcvg = 3
 ## focus distance is 160/10 = 16 meter
 PhotoRouter.focus = 160
 ## length are in meters //similar as worldsize of movement model
@@ -47,13 +48,13 @@ PhotoRouter.worldSize = 4500, 3400
 ## number of source nodes //similar as group1+group2 nodes
 PhotoRouter.nodeNum = 98
 #photoLimit : [25,50,100,200]
-PhotoRouter.photoLimit = 200
+PhotoRouter.photoLimit = 75
 ## cluster range is 240/10 = 24 meter
 PhotoRouter.clusterRange = 240
 ## PhotoRouter Data Source: [Synthetic={1}***Infocom={2}***Geolife={3}]
 PhotoRouter.dataSource = 2
 ##PhotoRouter Scenario Type: [ No_limit={1}***Simple={2}***Simple_cluster={3}***Group_Cluster={4}***Group_Interest={5}***RAware={6}***SmartPhoto={7}***PhotoNet={8} ]
-PhotoRouter.scenario = [6;4;5;7;8]
+PhotoRouter.scenario = [5;4;6;7;8]
 #PhotoRouter.scenario = 7
 
 ## Group-specific settings:

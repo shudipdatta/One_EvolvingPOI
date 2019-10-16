@@ -2,7 +2,7 @@
 # set _JAVA_OPTIONS=-Xmx4096m
 
 ## Scenario settings
-Scenario.name = Photo_%%PhotoRouter.photo%%-Scenario_%%PhotoRouter.scenario%%-ActualPOI_%%PhotoRouter.poi%%-K_%%PhotoRouter.kcvg%%
+Scenario.name = K_%%PhotoRouter.kcvg%%-Photo_%%PhotoRouter.photo%%-Scenario_%%PhotoRouter.scenario%%-ActualPOI_%%PhotoRouter.poi%%
 Scenario.simulateConnections = false
 Scenario.updateInterval = 2.0
 ## 86400s == 24h

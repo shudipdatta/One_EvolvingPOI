@@ -43,6 +43,7 @@ PhotoRouter.focus = 160
 PhotoRouter.worldSize = 503209, 837297
 ## number of source nodes //similar as group1+group2 nodes
 PhotoRouter.nodeNum = 182
+PhotoRouter.kcvg=1
 # limit: [12,25,50,100]
 PhotoRouter.photoLimit = 25
 ## cluster range is 240/10 = 24 meter

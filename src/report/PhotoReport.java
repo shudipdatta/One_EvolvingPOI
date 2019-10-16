@@ -75,6 +75,7 @@ public class PhotoReport extends Report {
 	public static HashMap<Double, CvgAndRed> cvgAndRedMap;
 	
 	public static HashMap<Integer, Integer> coverageValue;
+	public static ArrayList<Integer> totalKCoverageValue;
 	public static HashMap<Integer, Double> halfCoverageTime;
 	public static HashMap<Integer, Integer> redundantCoverageValue;
 	public static HashMap<Integer, Integer> numberOfPoint;
@@ -104,6 +105,7 @@ public class PhotoReport extends Report {
 		
 		//init report variables
 		coverageValue = new HashMap<Integer, Integer>();
+		totalKCoverageValue = new ArrayList<Integer>();
 		halfCoverageTime = new HashMap<Integer, Double>();
 		redundantCoverageValue = new HashMap<Integer, Integer>();
 		numberOfPoint = new HashMap<Integer, Integer>();
@@ -166,6 +168,8 @@ public class PhotoReport extends Report {
 			poi.cvgTotal = metadata.TotalCoverage(poi.cvgDetail);			
 		}
 		//copy the coveragevalue
+		int maxKList = 0;
+		HashMap<Integer, int[]> kCoverageValue = new HashMap<Integer, int[]>();
 		for(int i=0; i<actualPoiList.size()+hiddenPoiList.size(); i++) {
 			Metadata.POI poi;
 			if(i<actualPoiList.size()) poi = actualPoiList.get(i);
@@ -173,7 +177,43 @@ public class PhotoReport extends Report {
 			
 			coverageValue.put(i+1, poi.cvgTotal);
 			redundantCoverageValue.put(i+1, metadata.RedundantCoverage(poi.cvgDetail));
-			System.out.println("");
+			
+			//now find k coverage, the k coverage in kcvgList starts from 0 coverage, 1 coverage, 2 coverage, .....
+			int[] cvgDegree = new int[360];
+			for(int c=0; c<cvgDegree.length; c++) {
+				cvgDegree[c] = 0;
+			}
+			for (int degree: poi.cvgDetail) {
+				for (int d=degree; d<degree+2*metadata.getTheta(); d++) {
+					cvgDegree[d % cvgDegree.length]++;
+				}
+			}
+			int maxK = 0;
+			for(int c=0; c<cvgDegree.length; c++) {
+				if (cvgDegree[c] > maxK)
+					maxK = cvgDegree[c];
+			}
+			if (maxK > maxKList) maxKList = maxK; //finding the max length of the array for each poi
+			int[] kcvgList = new int[maxK+1];
+			for(int k=0; k<kcvgList.length; k++) {
+				kcvgList[k] = 0;
+			}
+			for(int c=0; c<cvgDegree.length; c++) {
+				kcvgList[cvgDegree[c]]++;
+			}
+			kCoverageValue.put(i+1, kcvgList);
+		}
+		int[] sumKcvgList = new int[maxKList+1];
+		for(int k=0; k<sumKcvgList.length; k++) {
+			sumKcvgList[k] = 0;
+		}
+		for(int[] kcvgList: kCoverageValue.values()) {
+			for (int k=0; k<kcvgList.length; k++) {
+				sumKcvgList[k] += kcvgList[k];
+			}
+		}
+		for(int k=0; k<sumKcvgList.length; k++) {
+			totalKCoverageValue.add(sumKcvgList[k]);
 		}
 	}
 	
@@ -325,6 +365,13 @@ public class PhotoReport extends Report {
 		for(Integer v: redundantCoverageValue.values()) redSum+=v;
 		for(Integer v: initialRedundantCoverageValue.values()) initRedSum+=v;
 		statsText += "Gained Redundancy %-----------\t" + redSum/(1.0*initRedSum) +"\n";
+		
+		//create percentage k coverage
+		statsText += "Gained K Coverage %-----------\t";
+		for(int kcvg: totalKCoverageValue) {
+			statsText += kcvg/(1.0*initCvgSum) + "\t";
+		}
+		statsText += "\n";
 		
 		//how many clusters so far
 		statsText += "Total Cluster Created---------\t" + undefCluster.size() +"\n";
